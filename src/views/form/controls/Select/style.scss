@@ -1,0 +1,87 @@
+@use '../../styles/variables.scss' as *;
+
+.form-select {
+  --select-font-size: #{$font-size-base};
+  --select-height: #{$component-size-base};
+
+  position: relative;
+  width: 100%;
+  display: inline-flex;
+
+  padding: 0 8px;
+  box-sizing: border-box;
+  box-shadow: 0 0 0 1px $border-color-base;
+  border-radius: $border-radius-base;
+  color: $text-color-regular;
+  transition: border-color $transition-duration;
+  outline: none;
+
+  &:hover {
+    border-color: $border-color-light;
+  }
+
+  &:focus {
+    border-color: $color-primary;
+  }
+
+  &--small {
+    --select-font-size: #{$font-size-small};
+    --select-height: #{$component-size-small};
+  }
+
+  &--large {
+    --select-font-size: #{$font-size-large};
+    --select-height: #{$component-size-large};
+  }
+
+  &--disabled {
+    background-color: $background-color-base;
+    cursor: not-allowed;
+  }
+
+  &--error {
+    border-color: $color-danger;
+  }
+}
+
+.form-select-inner {
+  width: 100%;
+  flex-grow: 1;
+  min-width: 120px;
+  padding: 0;
+  margin: 0;
+
+  background-color: transparent;
+  border: none;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+
+  height: var(--select-height);
+  line-height: var(--select-height);
+}
+
+.form-select-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: $text-color-placeholder;
+  font-size: $font-size-large;
+  line-height: 1;
+
+  &:hover {
+    color: $text-color-secondary;
+  }
+}
+
+.form-select-arrow {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: $text-color-placeholder;
+  font-size: $font-size-base;
+}

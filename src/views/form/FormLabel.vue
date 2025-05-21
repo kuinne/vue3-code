@@ -3,10 +3,12 @@
     class="form-item__label"
     :class="[
       `form-item__label--${labelAlign}`,
-      { 'form-item__label--ellipsis': labelEllipsis }]"
+      { 'form-item__label--ellipsis': labelEllipsis, 'form-item__label--required': required },
+      size && `form-item__label--${size}`,
+    ]"
     :style="{
       width: labelWidth === 'auto' ? undefined : labelWidth,
-      flex: labelPosition === 'top' ? undefined: `0 0 ${labelWidth}`
+      flex: labelPosition === 'top' ? undefined : `0 0 ${labelWidth}`,
     }"
   >
     <el-tooltip
@@ -16,32 +18,23 @@
       :disabled="!isLabelOverflow"
       effect="dark"
     >
-      <span
-        ref="labelRef"
-        class="label-text"
-        :class="{ 'label-text--ellipsis': labelEllipsis }"
-      >
+      <label ref="labelRef" class="label-text" :class="{ 'label-text--ellipsis': labelEllipsis }">
         {{ label }}
-      </span>
+      </label>
     </el-tooltip>
-    <span v-else class="label-text">{{ label }}</span>
+    <label v-else class="label-text">{{ label }}</label>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, nextTick, watch } from 'vue'
-import type { LabelAlign, LabelPosition } from './types'
+import type { FormLabelProps } from './types'
 
-interface Props {
-  label: string
-  labelWidth: string | number
-  labelAlign: LabelAlign
-  labelPosition: LabelPosition
-  labelEllipsis: boolean
-  required?: boolean
-}
-
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<FormLabelProps>(), {
+  label: '',
+  labelAlign: 'left',
+  labelPosition: 'inline',
+})
 
 const labelRef = ref<HTMLElement>()
 const isLabelOverflow = ref(false)
@@ -60,46 +53,22 @@ onMounted(() => {
 })
 
 // 监听标签宽度变化
-watch(() => props.labelWidth, () => {
-  checkLabelOverflow()
-})
+watch(
+  () => props.labelWidth,
+  () => {
+    checkLabelOverflow()
+  },
+)
 
 // 监听标签内容变化
-watch(() => props.label, () => {
-  checkLabelOverflow()
-})
+watch(
+  () => props.label,
+  () => {
+    checkLabelOverflow()
+  },
+)
 </script>
 
 <style lang="scss" scoped>
-.form-item__label {
-  padding-right: 12px;
-  flex-shrink: 0;
-  min-width: 0;
-  margin-right: 8px;
-
-  &--ellipsis {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  &--left {
-    text-align: left;
-  }
-  &--right {
-    text-align: right;
-  }
-}
-
-.label-text {
-  display: inline-block;
-  width: 100%;
-  height: 32px;
-  line-height: 32px;
-
-  &--ellipsis {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-</style> 
+@use './styles/formLabel.scss';
+</style>

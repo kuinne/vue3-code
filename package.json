@@ -17,6 +17,7 @@
     "@vue/repl": "^4.5.1",
     "@vvibe/vue-styled-components": "^1.4.1",
     "ant-design-vue": "4.x",
+    "async-validator": "^4.2.5",
     "element-plus": "^2.9.7",
     "js-web-screen-shot": "1.9.9-rc.26",
     "jspdf": "^3.0.1",

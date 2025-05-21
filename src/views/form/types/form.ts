@@ -1,9 +1,13 @@
-import type { LabelAlign, LabelPosition, FormSize } from './index'
+import type { LabelAlign, LabelPosition } from './form-label'
+import type { FormRuleItem } from './validation'
 
-export type FormLayout = 'horizontal' | 'vertical' | 'grid' | 'inline'
+export type FormLayout = 'horizontal' | 'vertical' | 'grid'
+
+export type FormSize = 'small' | 'default' | 'large'
 
 export interface FormProps {
-  layout?: 'horizontal' | 'vertical' | 'grid'
+  model?: Record<string, unknown>
+  layout?: FormLayout
   labelAlign?: LabelAlign
   labelPosition?: LabelPosition
   labelWidth?: string | number
@@ -15,6 +19,11 @@ export interface FormProps {
   rowGap?: string
   colGap?: string
   size?: FormSize
+
+  rules?: Record<string, FormRuleItem[]>
+
+  /** 显示错误校验信息 默认为 true */
+  showMessage?: boolean
 }
 
 export interface FormInstance {

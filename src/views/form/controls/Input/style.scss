@@ -1,0 +1,79 @@
+@use '../../styles/variables.scss' as *;
+
+.form-input {
+  --input-font-size: #{$font-size-base};
+  --input-height: #{$component-size-base};
+
+  position: relative;
+  width: 100%;
+  display: inline-flex;
+
+  padding: 0 8px;
+  box-sizing: border-box;
+  box-shadow: 0 0 0 1px $border-color-base;
+  border-radius: $border-radius-base;
+  color: $text-color-regular;
+  transition: border-color $transition-duration;
+  outline: none;
+
+  &:hover {
+    border-color: $border-color-light;
+  }
+  &:focus {
+    border-color: $color-primary;
+  }
+
+  &--small {
+    --input-font-size: #{$font-size-small};
+    --input-height: #{$component-size-small};
+  }
+  &--large {
+    --input-font-size: #{$font-size-large};
+    --input-height: #{$component-size-large};
+  }
+  &--disabled {
+    background-color: $background-color-base;
+    cursor: not-allowed;
+  }
+
+  &--error {
+    box-shadow: 0 0 0 1px $color-danger;
+  }
+}
+
+.form-input-inner {
+  width: 100%;
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  height: var(--input-height);
+  line-height: var(--input-height);
+  font-size: var(--input-font-size);
+}
+.form-textarea-inner {
+  width: 100%;
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  min-height: var(--input-height);
+  line-height: 1.5;
+  font-size: var(--input-font-size);
+}
+
+.form-input-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: $text-color-placeholder;
+  font-size: $font-size-large;
+  line-height: 1;
+  &:hover {
+    color: $text-color-secondary;
+  }
+}

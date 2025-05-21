@@ -8,22 +8,17 @@
     </div>
 
     <!-- 输入框 -->
-    <el-input
+    <Input
       v-model="inputValue"
       v-bind="$attrs"
       class="money-input__input"
       @input="handleInput"
       @blur="handleBlur"
+      @clear="handleClear"
+      :error="error"
+      :validate-event="false"
     >
-      <!-- 输入框前置内容 -->
-      <template #prefix>
-        <slot name="inputPrefix"></slot>
-      </template>
-      <!-- 输入框后置内容 -->
-      <template #suffix>
-        <slot name="inputSuffix"></slot>
-      </template>
-    </el-input>
+    </Input>
 
     <!-- 后置插槽 -->
     <div class="money-input__suffix">
@@ -41,22 +36,31 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
+import type { FormSize } from '../types'
+import Input from '../controls/Input'
 
 const props = defineProps<{
   modelValue: string | number
   precision?: number
+  size?: FormSize
+  error?: boolean
+  errorMessage?: string
 }>()
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string | number): void
+  (e: 'change', value: string | number): void
+  (e: 'blur', value: string | number): void
 }>()
 
 // 处理输入
-const handleInput = (value: string) => {
+const handleInput = (e: InputEvent) => {
+  const value = e.target?.value as string
   // 只允许输入数字和小数点
   const reg = /^\d*\.?\d*$/
   if (reg.test(value)) {
     emit('update:modelValue', value)
+    emit('change', value)
   }
 }
 
@@ -64,23 +68,29 @@ const handleInput = (value: string) => {
 const handleBlur = () => {
   const value = props.modelValue
   if (value === '') return
-  
+
   // 格式化金额
   const num = Number(value)
   if (isNaN(num)) {
     emit('update:modelValue', '')
     return
   }
-  
+
   const precision = props.precision ?? 2
   const formatted = num.toFixed(precision)
   emit('update:modelValue', formatted)
+  emit('blur', value)
+}
+
+const handleClear = () => {
+  emit('update:modelValue', '')
+  emit('change', '')
 }
 
 // 计算属性处理 v-model
 const inputValue = computed({
   get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+  set: (value) => emit('update:modelValue', value),
 })
 </script>
 
@@ -114,4 +124,4 @@ const inputValue = computed({
     color: #909399;
   }
 }
-</style> 
+</style>

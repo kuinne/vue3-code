@@ -12,17 +12,20 @@
       '--form-row-gap': rowGap,
       '--form-col-gap': colGap,
     }"
+    v-bind="$attrs"
   >
     <slot></slot>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, onMounted, nextTick, computed } from 'vue'
+import { ref, watch, onMounted, nextTick, computed, reactive, toRefs } from 'vue'
 import type { FormProps } from './types/form'
-import { useProvideFormContext } from './hooks/useFormContext'
+
+import { useProvideForm, type FormContext, type FormItemContext } from './context'
 
 const props = withDefaults(defineProps<FormProps>(), {
+  model: () => ({}),
   layout: 'horizontal',
   labelAlign: 'right',
   labelPosition: 'inline',
@@ -39,6 +42,42 @@ const props = withDefaults(defineProps<FormProps>(), {
 const formRef = ref<HTMLElement>()
 const maxLabelWidth = ref(0)
 
+const fields: FormItemContext[] = []
+
+const getField: FormContext['getField'] = (prop) => {
+  return fields.find((field) => field.prop === prop)
+}
+
+const addField: FormContext['addField'] = (field) => {
+  fields.push(field)
+}
+
+const removeField: FormContext['removeField'] = (field) => {
+  if (field.prop) {
+    fields.splice(fields.indexOf(field), 1)
+  }
+}
+
+const validateField: FormContext['validateField'] = async (prop) => {
+  const field = getField(prop)
+  if (!field) return true
+  return field.validate()
+}
+
+const validate: FormContext['validate'] = async () => {
+  let flag = true
+
+  for (const field of fields) {
+    flag = (await field.validate()) && flag
+  }
+  return flag
+}
+
+const clearValidate: FormContext['clearValidate'] = () => {
+  fields.forEach((field) => {
+    field.clearValidate()
+  })
+}
 // 计算最大标签宽度
 const calculateMaxLabelWidth = async () => {
   if (
@@ -98,96 +137,26 @@ const unifiedLabelWidth = computed(() => {
   return props.labelWidth
 })
 
-useProvideFormContext({
-  labelWidth: computed(() => unifiedLabelWidth.value),
-  labelEllipsis: computed(() => props.labelEllipsis),
-  labelAlign: computed(() => props.labelAlign),
-  labelPosition: computed(() => props.labelPosition),
-  gridCols: computed(() => props.gridCols),
-  gridColSpan: computed(() => props.gridColSpan),
-  gridRowSpan: computed(() => props.gridRowSpan),
-  size: computed(() => props.size),
-})
+useProvideForm(
+  reactive({
+    ...toRefs(props),
+    getField,
+    addField,
+    removeField,
+    validateField,
+    validate,
+    clearValidate,
+    unifiedLabelWidth,
+  }),
+)
 
 defineExpose({
-  validate: async () => {
-    // 获取所有表单项
-    const formItems = formRef.value?.getElementsByClassName('form-item')
-    if (!formItems) return true
-
-    // 遍历所有表单项进行验证
-    const results = await Promise.all(
-      Array.from(formItems).map(async (item) => {
-        const formItem = item as any
-        if (formItem.__vueParentComponent?.exposed?.validate) {
-          return formItem.__vueParentComponent.exposed.validate()
-        }
-        return true
-      }),
-    )
-
-    // 所有表单项都验证通过才返回 true
-    return results.every((result) => result === true)
-  },
-  resetFields: () => {
-    // 重置所有表单项的值
-    const formItems = formRef.value?.getElementsByClassName('form-item')
-    if (!formItems) return
-
-    Array.from(formItems).forEach((item) => {
-      const formItem = item as any
-      if (formItem.__vueParentComponent?.exposed?.clearValidate) {
-        formItem.__vueParentComponent.exposed.clearValidate()
-      }
-    })
-  },
-  clearValidate: () => {
-    // 清除所有表单项的验证状态
-    const formItems = formRef.value?.getElementsByClassName('form-item')
-    if (!formItems) return
-
-    Array.from(formItems).forEach((item) => {
-      const formItem = item as any
-      if (formItem.__vueParentComponent?.exposed?.clearValidate) {
-        formItem.__vueParentComponent.exposed.clearValidate()
-      }
-    })
-  },
+  validate,
+  validateField,
+  clearValidate,
 })
 </script>
 
 <style lang="scss" scoped>
-:root {
-  // 网格变量
-  --form-grid-cols: 3;
-  --form-row-gap: 20px;
-  --form-col-gap: 20px;
-}
-
-.form {
-  width: 100%;
-  margin-bottom: var(--form-row-gap);
-
-  &--layout {
-    &-horizontal {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: var(--form-row-gap);
-    }
-
-    &-vertical {
-      display: flex;
-      flex-direction: column;
-      gap: var(--form-row-gap);
-    }
-
-    &-grid {
-      display: grid;
-      grid-template-columns: repeat(var(--form-grid-cols), 1fr);
-      row-gap: var(--form-row-gap);
-      column-gap: var(--form-col-gap);
-    }
-  }
-}
+@use './styles/form.scss';
 </style>

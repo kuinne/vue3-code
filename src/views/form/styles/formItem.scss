@@ -1,0 +1,83 @@
+@use './variables.scss' as *;
+.form-item {
+  // 颜色变量
+  --form-error-color: #{$color-danger};
+  --form-text-color: #{$text-color-primary};
+
+  // 间距变量
+  --form-spacing-xs: 4px;
+  --form-spacing-sm: 8px;
+  --form-spacing-md: 12px;
+
+  // 字体大小
+  --form-font-size-sm: 12px;
+  --form-font-size-base: 14px;
+
+  // 组件尺寸
+  --form-component-height: 32px;
+  display: flex;
+  flex-wrap: wrap;
+
+  &--label-position-inline {
+    flex-direction: row;
+  }
+
+  &--label-position-top {
+    flex-direction: column;
+    .form-item__label {
+      width: 100%;
+    }
+  }
+
+  &__label {
+    padding-right: var(--form-spacing-md);
+    flex-shrink: 0;
+    min-width: 0;
+    margin-right: var(--form-spacing-sm);
+
+    &--ellipsis {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    &--left {
+      text-align: left;
+    }
+    &--right {
+      text-align: right;
+    }
+  }
+
+  &__content {
+    position: relative;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__error {
+    color: var(--form-error-color);
+    font-size: var(--form-font-size-sm);
+    line-height: 1;
+    padding-top: var(--form-spacing-xs);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+}
+
+// 垂直布局
+:deep(.form--label-position-top) {
+  .form-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--form-spacing-sm);
+
+    .form-item__label {
+      width: 100%;
+      padding-right: 0;
+    }
+  }
+}

@@ -1,0 +1,33 @@
+:root {
+  // 网格变量
+  --form-grid-cols: 3;
+  --form-row-gap: 20px;
+  --form-col-gap: 20px;
+}
+
+.form {
+  width: 100%;
+  margin-bottom: var(--form-row-gap);
+
+  &--layout {
+    &-horizontal {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: var(--form-row-gap);
+    }
+
+    &-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: var(--form-row-gap);
+    }
+
+    &-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--form-grid-cols), 1fr);
+      row-gap: var(--form-row-gap);
+      column-gap: var(--form-col-gap);
+    }
+  }
+}

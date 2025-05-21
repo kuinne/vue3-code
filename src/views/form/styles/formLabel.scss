@@ -1,0 +1,48 @@
+@use './variables.scss' as *;
+.form-item__label {
+  --label-font-size: #{$font-size-base};
+  --label-height: #{$component-size-base};
+
+  display: inline-flex;
+
+  padding-right: 12px;
+  flex-shrink: 0;
+  min-width: 0;
+  margin-right: 8px;
+
+  &--left {
+    text-align: left;
+  }
+  &--right {
+    text-align: right;
+  }
+  &--required {
+    .label-text::before {
+      content: '*';
+      color: var(--form-error-color);
+      margin-right: var(--form-spacing-xs);
+    }
+  }
+  &--small {
+    --label-font-size: #{$font-size-small};
+    --label-height: #{$component-size-small};
+  }
+  &--large {
+    --label-font-size: #{$font-size-large};
+    --label-height: #{$component-size-large};
+  }
+
+  .label-text {
+    display: inline-block;
+    width: 100%;
+    font-size: var(--label-font-size);
+    line-height: var(--label-height);
+    height: var(--label-height);
+
+    &--ellipsis {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}

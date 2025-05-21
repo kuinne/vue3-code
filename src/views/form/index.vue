@@ -86,148 +86,82 @@
     <div class="form-demo__content">
       <h2>表单组件示例</h2>
 
-      <el-tabs v-model="activeTab">
-        <el-tab-pane label="基础组件" name="basic">
-          <Form
-            ref="basicFormRef"
-            :model="formData"
-            :layout="layout"
-            :label-width="currentLabelWidth"
-            :label-position="currentLabelPosition"
-            :label-align="labelAlign"
-            :label-ellipsis="labelEllipsis"
-            :grid-cols="gridCols"
-            :row-gap="rowGap"
-            :col-gap="colGap"
-            :size="size"
-          >
-            <!-- 输入框示例 -->
-            <FormItem
-              type="input"
-              v-model="formData.input"
-              name="input"
-              label="输入框"
-              placeholder="请输入"
+      <Form
+        ref="formRef"
+        :model="formData"
+        :layout="layout"
+        :label-width="currentLabelWidth"
+        :label-position="currentLabelPosition"
+        :label-align="labelAlign"
+        :label-ellipsis="labelEllipsis"
+        :grid-cols="gridCols"
+        :row-gap="rowGap"
+        :col-gap="colGap"
+        :size="size"
+        :rules="formRules"
+        :style="'max-width: 1000px'"
+      >
+        <!-- 选择器示例 -->
+        <FormItem prop="select" label="选择器">
+          <Select
+            v-model="formData.select"
+            :options="[
+              { label: '选项1', value: 1 },
+              { label: '选项2', value: 2 },
+            ]"
+            placeholder="请选择"
+            clearable
+          ></Select>
+        </FormItem>
+        <!-- 必填校验 -->
+        <FormItem v-model="formData.input" prop="input" label="输入框" required>
+          <Input v-model="formData.input" placeholder="请输入" clearable />
+        </FormItem>
+        <FormItem
+          v-model="formData.longText"
+          prop="longText"
+          label="长标签哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈"
+        >
+          <Input v-model="formData.longText" placeholder="请输入" clearable />
+        </FormItem>
+
+        <!-- 数字范围校验 -->
+        <FormItem prop="range" label="数字范围">
+          <Input type="number" v-model="formData.range" placeholder="请输入数字" clearable />
+        </FormItem>
+
+        <!--占多行 -->
+        <FormItem prop="textare" label="占多行" :grid-row-span="3">
+          <div
+            style="
+              border: 1px solid;
+              width: 100%;
+              height: 100%;
+              min-width: 100px;
+              box-sizing: border-box;
+            "
+          ></div>
+        </FormItem>
+
+        <!-- 多行文本框 -->
+        <FormItem prop="textare" label="多行文本框" :grid-col-span="gridCols">
+          <Input type="textarea" v-model="formData.textarea" placeholder="请输入" clearable />
+        </FormItem>
+
+        <FormItem
+          prop="customComponent"
+          label="自定义组件"
+          v-slot="{ error }"
+          :show-message="false"
+        >
+          <div>
+            <MoneyInput
+              v-model="formData.customComponent"
+              placeholder="请输入金额"
               clearable
-            />
-
-            <!-- 选择器示例 -->
-            <FormItem
-              type="select"
-              v-model="formData.select"
-              name="select"
-              label="选择器"
-              :options="[
-                { label: '选项1', value: 1 },
-                { label: '选项2', value: 2 },
-              ]"
-              placeholder="请选择"
-              clearable
-              multiple
-              filterable
-              :grid-row-span="2"
-            />
-
-            <!-- 日期选择器示例 -->
-            <FormItem
-              type="date"
-              v-model="formData.date"
-              name="date"
-              label="日期"
-              placeholder="请选择日期"
-              clearable
-              format="YYYY-MM-DD"
-              valueFormat="YYYY-MM-DD"
-              dateType="date"
-            />
-
-            <!-- 数字输入框示例 -->
-            <FormItem
-              type="number"
-              v-model="formData.number"
-              name="number"
-              label="数字"
-              placeholder="请输入数字"
-              :min="0"
-              :max="100"
-              :step="1"
-              :precision="2"
-            />
-
-            <!-- 开关示例 -->
-            <FormItem
-              type="switch"
-              v-model="formData.switch"
-              name="switch"
-              label="开关"
-              activeText="开"
-              inactiveText="关"
-            />
-
-            <!-- 复选框示例 -->
-            <FormItem
-              type="checkbox"
-              v-model="formData.checkbox"
-              name="checkbox"
-              label="复选框"
-              :options="[
-                { label: '选项1', value: 1 },
-                { label: '选项2', value: 2 },
-              ]"
-            />
-
-            <!-- 单选框示例 -->
-            <FormItem
-              type="radio"
-              v-model="formData.radio"
-              name="radio"
-              label="单选框"
-              :options="[
-                { label: '选项1', value: 1 },
-                { label: '选项2', value: 2 },
-              ]"
-            />
-          </Form>
-        </el-tab-pane>
-
-        <el-tab-pane label="自定义组件" name="custom">
-          <Form
-            ref="customFormRef"
-            :model="formData"
-            :layout="layout"
-            :label-width="currentLabelWidth"
-            :label-position="currentLabelPosition"
-            :label-align="labelAlign"
-            :label-ellipsis="labelEllipsis"
-            :grid-cols="gridCols"
-            :row-gap="rowGap"
-            :col-gap="colGap"
-            :size="size"
-          >
-            <!-- 基础用法 -->
-            <FormItem
-              type="custom"
-              v-model="formData.amount1"
-              name="amount1"
-              label="金额输入"
-              :component="MoneyInput"
-              :props="{
-                placeholder: '请输入金额',
-                clearable: true,
-              }"
-            />
-
-            <!-- 自定义前缀后缀 -->
-            <FormItem
-              type="custom"
-              v-model="formData.amount2"
-              name="amount2"
-              label="自定义符号"
-              :component="MoneyInput"
-              :props="{
-                placeholder: '请输入金额',
-                clearable: true,
-              }"
+              :error="!!error"
+              @change="handleCusotmChange"
+              @blur="handleCusotmBlur"
             >
               <template #prefix>
                 <span class="custom-prefix">$</span>
@@ -235,187 +169,145 @@
               <template #suffix>
                 <span class="custom-suffix">USD</span>
               </template>
-            </FormItem>
-
-            <!-- 自定义输入框前后缀 -->
-            <FormItem
-              type="custom"
-              v-model="formData.amount3"
-              name="amount3"
-              label="输入框装饰"
-              :component="MoneyInput"
-              :props="{
-                placeholder: '请输入金额',
-                clearable: true,
-              }"
-            >
-              <template #inputPrefix>
-                <el-icon><Search /></el-icon>
+            </MoneyInput>
+            {{ error }}
+          </div>
+        </FormItem>
+        <FormItem prop="customComponent1" label="自定义组件2">
+          <div>
+            <MoneyInput v-model="formData.customComponent1" placeholder="请输入金额" clearable>
+              <template #prefix>
+                <span class="custom-prefix">$</span>
               </template>
-              <template #inputSuffix>
-                <el-icon><Calendar /></el-icon>
+              <template #suffix>
+                <span class="custom-suffix">USD</span>
               </template>
-            </FormItem>
-
-            <!-- 带提示信息 -->
-            <FormItem
-              type="custom"
-              v-model="formData.amount4"
-              name="amount4"
-              label="带提示信息"
-              :component="MoneyInput"
-              :props="{
-                placeholder: '请输入金额',
-                clearable: true,
-              }"
-            >
-              <template #tip>
-                <div class="custom-tip">
-                  <el-icon><InfoFilled /></el-icon>
-                  <span>请输入正确的金额格式</span>
-                </div>
-              </template>
-            </FormItem>
-          </Form>
-        </el-tab-pane>
-
-        <el-tab-pane label="表单校验" name="validation">
-          <Form
-            ref="validationFormRef"
-            :model="formData"
-            :layout="layout"
-            :label-width="currentLabelWidth"
-            :label-position="currentLabelPosition"
-            :label-align="labelAlign"
-            :label-ellipsis="labelEllipsis"
-            :grid-cols="gridCols"
-            :row-gap="rowGap"
-            :col-gap="colGap"
-            :size="size"
-          >
-            <!-- 必填校验 -->
-            <FormItem
-              type="input"
-              v-model="formData.required"
-              name="required"
-              label="必填项"
-              placeholder="请输入"
-              :rules="[{ required: true, message: '请输入必填项' }]"
-            />
-
-            <!-- 正则校验 -->
-            <FormItem
-              type="input"
-              v-model="formData.pattern"
-              name="pattern"
-              label="邮箱"
-              placeholder="请输入邮箱"
-              :rules="[
-                { required: true, message: '请输入邮箱' },
-                {
-                  pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: '请输入正确的邮箱格式',
-                },
-              ]"
-            />
-
-            <!-- 数字范围校验 -->
-            <FormItem
-              type="number"
-              v-model="formData.range"
-              name="range"
-              label="数字范围"
-              placeholder="请输入数字"
-              :rules="[
-                { required: true, message: '请输入数字' },
-                { min: 0, max: 100, message: '数字范围在0-100之间' },
-              ]"
-            />
-
-            <!-- 自定义校验 -->
-            <FormItem
-              type="input"
-              v-model="formData.custom"
-              name="custom"
-              label="自定义校验"
-              placeholder="请输入"
-              :rules="[
-                { required: true, message: '请输入' },
-                { validator: validateCustom, message: '自定义校验失败' },
-              ]"
-            />
-          </Form>
-        </el-tab-pane>
-      </el-tabs>
+            </MoneyInput>
+          </div>
+          <template #error="{ error }">错误附加信息{{ error }}</template>
+        </FormItem>
+      </Form>
+      <el-button type="primary" @click="validateForm">校验表单</el-button>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
-import { Search, Calendar, InfoFilled } from '@element-plus/icons-vue'
 import Form from './Form.vue'
 import FormItem from './FormItem.vue'
 import MoneyInput from './components/MoneyInput.vue'
-import type { FormLayout, LabelPosition, LabelAlign, FormSize } from './types/form'
+import type { FormProps } from './types/form'
+import { ElMessage } from 'element-plus'
 
-const layout = ref<FormLayout>('horizontal')
-const currentLabelPosition = ref<LabelPosition>('inline')
-const labelAlign = ref<LabelAlign>('left')
+import Input from './controls/Input'
+import Select from './controls/Select'
+
+const layout = ref<FormProps['layout']>('horizontal')
+const currentLabelPosition = ref<FormProps['labelPosition']>('inline')
+const labelAlign = ref<FormProps['labelAlign']>('left')
 const currentLabelWidth = ref<'auto' | '100px' | '150px'>('auto')
 const labelEllipsis = ref(true)
 const gridCols = ref(3)
 const rowGap = ref('20px')
 const colGap = ref('20px')
-const size = ref<FormSize>('default')
-const activeTab = ref('basic')
+const size = ref<FormProps['size']>('default')
 
 const formData = reactive({
-  // 布局示例数据
-  username: '',
-  password: '',
-  longLabel: '',
-  email: '',
-  phone: '',
-  address: '',
-  description: '',
-  gender: '',
-  hobbies: [],
-  workExperience: '',
-  education: '',
-  skills: '',
-  agree: false,
-  wrapLabel: '',
-
-  // 基础组件示例数据
   input: '',
-  select: [],
-  date: '',
-  number: 0,
-  switch: false,
-  checkbox: [],
-  radio: '',
-
-  // 自定义组件示例数据
-  amount1: '',
-  amount2: '',
-  amount3: '',
-  amount4: '',
-
-  // 校验示例数据
-  required: '',
-  length: '',
-  pattern: '',
-  custom: '',
-  combined: '',
-  async: '',
-  trigger: '',
+  select: 1,
+  textarea: '',
+  longText: '',
   range: 0,
+  customComponent: '',
+  customComponent1: '',
 })
 
-const validateCustom = (value: string | number) => {
-  const num = Number(value)
-  return !isNaN(num) && num % 2 === 0
+const formRef = ref<InstanceType<typeof Form>>()
+
+const formRules = ref<FormProps['rules']>({
+  input: [
+    {
+      required: true,
+      message: '请输入必填项',
+    },
+    {
+      min: 3,
+      max: 5,
+      message: '长度在3-5之间',
+    },
+  ],
+  pattern: [
+    { required: true, message: '请输入邮箱' },
+    {
+      pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      message: '请输入正确的邮箱格式',
+    },
+  ],
+  range: [
+    { type: 'number', required: true, message: '请输入数字' },
+    {
+      validator(rule, value, callback) {
+        if (value < 0 || value > 100) {
+          callback(new Error('数字范围在0-100之间'))
+        } else {
+          callback()
+        }
+      },
+    },
+  ],
+  custom: [
+    { required: true, message: '请输入' },
+    {
+      validator: (rule, value, callback) => {
+        const num = Number(value)
+        if (!isNaN(num) && num % 2 === 0) {
+          callback(new Error('自定义校验失败'))
+        } else {
+          callback()
+        }
+      },
+      message: '自定义校验失败',
+    },
+  ],
+  amount: [{ required: true, message: '请输入' }],
+
+  customComponent: [
+    {
+      required: true,
+      message: '请输入必填项',
+    },
+    {
+      message: '请输入数字',
+      pattern: /^\d*\.?\d*$/,
+    },
+  ],
+  customComponent1: [
+    {
+      required: true,
+      message: '请输入必填项',
+    },
+    {
+      message: '请输入数字',
+      pattern: /^\d*\.?\d*$/,
+    },
+  ],
+})
+
+const validateForm = async () => {
+  if (await formRef.value?.validate()) {
+    ElMessage.success('校验成功')
+  } else {
+    ElMessage.error('校验失败')
+  }
+}
+
+const handleCusotmChange = (value: string | number) => {
+  formRef.value?.validateField('customComponent')
+}
+
+const handleCusotmBlur = (value: string | number) => {
+  formRef.value?.validateField('customComponent')
 }
 </script>
 
